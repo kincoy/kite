@@ -82,16 +82,17 @@ docker run -d -p 8080:8080 -v ./data:/data -e DB_DSN=/data/db.sqlite ghcr.io/kit
 
 #### 使用 Helm (推荐)
 
-1.  **添加 Helm 仓库**
+1.  **从 OCI registry 安装**
+
+    ```bash
+    helm install kite oci://ghcr.io/kite-org/charts/kite -n kube-system
+    ```
+
+2.  **或从 Helm 仓库安装**
 
     ```bash
     helm repo add kite https://kite-org.github.io/kite/
     helm repo update
-    ```
-
-2.  **使用默认值安装**
-
-    ```bash
     helm install kite kite/kite -n kube-system
     ```
 

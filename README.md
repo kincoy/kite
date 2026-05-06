@@ -82,16 +82,17 @@ docker run -d -p 8080:8080 -v ./data:/data -e DB_DSN=/data/db.sqlite ghcr.io/kit
 
 #### Using Helm (Recommended)
 
-1. **Add Helm repository**
+1. **Install from OCI registry**
+
+   ```bash
+   helm install kite oci://ghcr.io/kite-org/charts/kite -n kube-system
+   ```
+
+2. **Or install from Helm repository**
 
    ```bash
    helm repo add kite https://kite-org.github.io/kite/
    helm repo update
-   ```
-
-2. **Install with default values**
-
-   ```bash
    helm install kite kite/kite -n kube-system
    ```
 

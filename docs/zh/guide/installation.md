@@ -5,7 +5,7 @@
 ## 前提条件
 
 - 拥有集群管理员权限的 `kubectl`
-- Helm v3（推荐使用 Helm 安装）
+- Helm v4，或支持 OCI chart 的 Helm v3.8+
 - MySQL/PostgreSQL 数据库，或本地存储用于 sqlite
 
 ## 安装方式
@@ -15,7 +15,12 @@
 使用 Helm 可灵活配置和升级 Kite：
 
 ```bash
+helm install kite oci://ghcr.io/kite-org/charts/kite -n kite-system --create-namespace
+```
 
+或从 Helm 仓库安装：
+
+```bash
 # 添加 Kite 仓库
 helm repo add kite https://kite-org.github.io/kite/
 
@@ -35,6 +40,9 @@ helm install kite kite/kite -n kite-system --create-namespace
 使用自定义值安装：
 
 ```bash
+helm install kite oci://ghcr.io/kite-org/charts/kite -n kite-system -f values.yaml
+
+# 或使用 Helm 仓库
 helm install kite kite/kite -n kite-system -f values.yaml
 ```
 
@@ -127,7 +135,7 @@ basePath: "/kite"
 - 或使用 Helm CLI：
 
 ```fish
-helm install kite kite/kite -n kite-system --create-namespace --set basePath="/kite"
+helm install kite oci://ghcr.io/kite-org/charts/kite -n kite-system --create-namespace --set basePath="/kite"
 ```
 
 说明：

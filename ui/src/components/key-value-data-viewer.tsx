@@ -119,7 +119,13 @@ export function KeyValueDataViewer({
                 </div>
               </div>
               <div className="bg-muted rounded px-3 py-2 font-mono text-xs break-all">
-                <span className={revealed ? 'whitespace-pre-wrap' : 'blur-sm select-none inline'}>
+                <span
+                  className={
+                    revealed
+                      ? 'whitespace-pre-wrap'
+                      : 'blur-sm select-none inline'
+                  }
+                >
                   {displayValue}
                 </span>
               </div>

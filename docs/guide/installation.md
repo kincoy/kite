@@ -5,7 +5,7 @@ This guide provides detailed instructions for installing Kite in a Kubernetes en
 ## Prerequisites
 
 - `kubectl` with cluster administrator privileges
-- Helm v3 (recommended for Helm installation)
+- Helm v4, or Helm v3.8+ for OCI chart installation
 - MySQL/PostgreSQL database, or local storage for sqlite
 
 ## Installation Methods
@@ -13,6 +13,14 @@ This guide provides detailed instructions for installing Kite in a Kubernetes en
 ### Method 1: Helm Chart (Recommended)
 
 Using Helm provides flexibility for configuration and upgrades:
+
+Install from OCI registry:
+
+```bash
+helm install kite oci://ghcr.io/kite-org/charts/kite -n kite-system --create-namespace
+```
+
+Or install from Helm repository:
 
 ```bash
 # Add Kite repository
@@ -34,6 +42,9 @@ For complete configuration, refer to [Chart Values](../config/chart-values).
 Install with custom values:
 
 ```bash
+helm install kite oci://ghcr.io/kite-org/charts/kite -n kite-system -f values.yaml
+
+# Or use the Helm repository
 helm install kite kite/kite -n kite-system -f values.yaml
 ```
 
@@ -126,7 +137,7 @@ basePath: "/kite"
 - Or with Helm CLI:
 
 ```fish
-helm install kite kite/kite -n kite-system --create-namespace --set basePath="/kite"
+helm install kite oci://ghcr.io/kite-org/charts/kite -n kite-system --create-namespace --set basePath="/kite"
 ```
 
 Important notes:

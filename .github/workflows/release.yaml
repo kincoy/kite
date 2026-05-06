@@ -90,10 +90,17 @@ jobs:
             zzde/${{ env.IMAGE_NAME }}:latest
           labels: runnumber=${{ github.run_id }}
 
+      - name: Login Helm to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
+
       - name: Package Helm chart
         run: |
-          # Package chart
           helm package charts/kite/
+
+      - name: Push Helm chart to OCI registry
+        run: |
+          CHART_PACKAGE=$(ls kite-*.tgz)
+          helm push "$CHART_PACKAGE" oci://ghcr.io/${{ github.repository_owner }}/charts
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
