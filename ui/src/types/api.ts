@@ -252,6 +252,28 @@ type listMetadataType = {
   remainingItemCount?: number
 }
 
+export interface KubernetesResource {
+  apiVersion?: string
+  kind?: string
+  metadata?: {
+    name?: string
+    namespace?: string
+    creationTimestamp?: string
+    uid?: string
+    resourceVersion?: string
+    labels?: Record<string, string>
+    annotations?: Record<string, string>
+  }
+  [key: string]: unknown
+}
+
+export interface KubernetesResourceList {
+  apiVersion?: string
+  kind?: string
+  items: KubernetesResource[]
+  metadata?: listMetadataType
+}
+
 // Define resource type mappings
 export interface ResourcesTypeMap {
   pods: {
@@ -264,6 +286,13 @@ export interface ResourcesTypeMap {
   jobs: JobList
   cronjobs: CronJobList
   services: ServiceList
+  endpoints: KubernetesResourceList
+  endpointslices: KubernetesResourceList
+  podtemplates: KubernetesResourceList
+  replicationcontrollers: KubernetesResourceList
+  limitranges: KubernetesResourceList
+  resourcequotas: KubernetesResourceList
+  componentstatuses: KubernetesResourceList
   gateways: {
     items: Gateway[]
     metadata?: listMetadataType
@@ -290,17 +319,51 @@ export interface ResourcesTypeMap {
   events: EventList
   persistentvolumes: PersistentVolumeList
   storageclasses: StorageClassList
+  volumeattachments: KubernetesResourceList
+  csidrivers: KubernetesResourceList
+  csinodes: KubernetesResourceList
+  csistoragecapacities: KubernetesResourceList
+  volumeattributesclasses: KubernetesResourceList
   podmetrics: {
     items: PodMetrics[]
     metadata?: listMetadataType
   }
   replicasets: ReplicaSetList
+  controllerrevisions: KubernetesResourceList
   poddisruptionbudgets: PodDisruptionBudgetList
   serviceaccounts: ServiceAccountList
   roles: RoleList
   rolebindings: RoleBindingList
   clusterroles: ClusterRoleList
   clusterrolebindings: ClusterRoleBindingList
+  certificatesigningrequests: KubernetesResourceList
+  clustertrustbundles: KubernetesResourceList
+  podcertificaterequests: KubernetesResourceList
+  leases: KubernetesResourceList
+  leasecandidates: KubernetesResourceList
+  runtimeclasses: KubernetesResourceList
+  priorityclasses: KubernetesResourceList
+  workloads: KubernetesResourceList
+  podgroups: KubernetesResourceList
+  flowschemas: KubernetesResourceList
+  prioritylevelconfigurations: KubernetesResourceList
+  validatingadmissionpolicies: KubernetesResourceList
+  validatingadmissionpolicybindings: KubernetesResourceList
+  validatingwebhookconfigurations: KubernetesResourceList
+  mutatingwebhookconfigurations: KubernetesResourceList
+  mutatingadmissionpolicies: KubernetesResourceList
+  mutatingadmissionpolicybindings: KubernetesResourceList
+  resourceslices: KubernetesResourceList
+  resourceclaims: KubernetesResourceList
+  deviceclasses: KubernetesResourceList
+  resourceclaimtemplates: KubernetesResourceList
+  devicetaintrules: KubernetesResourceList
+  resourcepoolstatusrequests: KubernetesResourceList
+  storageversions: KubernetesResourceList
+  storageversionmigrations: KubernetesResourceList
+  ingressclasses: KubernetesResourceList
+  ipaddresses: KubernetesResourceList
+  servicecidrs: KubernetesResourceList
   horizontalpodautoscalers: HorizontalPodAutoscalerList
   helmrelease: HelmReleaseList
 }
@@ -351,6 +414,13 @@ export interface ResourceTypeMap {
   jobs: Job
   cronjobs: CronJob
   services: Service
+  endpoints: KubernetesResource
+  endpointslices: KubernetesResource
+  podtemplates: KubernetesResource
+  replicationcontrollers: KubernetesResource
+  limitranges: KubernetesResource
+  resourcequotas: KubernetesResource
+  componentstatuses: KubernetesResource
   gateways: Gateway
   httproutes: HTTPRoute
   configmaps: ConfigMap
@@ -365,7 +435,13 @@ export interface ResourceTypeMap {
   events: Event
   persistentvolumes: PersistentVolume
   storageclasses: StorageClass
+  volumeattachments: KubernetesResource
+  csidrivers: KubernetesResource
+  csinodes: KubernetesResource
+  csistoragecapacities: KubernetesResource
+  volumeattributesclasses: KubernetesResource
   replicasets: ReplicaSet
+  controllerrevisions: KubernetesResource
   poddisruptionbudgets: PodDisruptionBudget
   podmetrics: PodMetrics
   serviceaccounts: ServiceAccount
@@ -373,6 +449,34 @@ export interface ResourceTypeMap {
   rolebindings: RoleBinding
   clusterroles: ClusterRole
   clusterrolebindings: ClusterRoleBinding
+  certificatesigningrequests: KubernetesResource
+  clustertrustbundles: KubernetesResource
+  podcertificaterequests: KubernetesResource
+  leases: KubernetesResource
+  leasecandidates: KubernetesResource
+  runtimeclasses: KubernetesResource
+  priorityclasses: KubernetesResource
+  workloads: KubernetesResource
+  podgroups: KubernetesResource
+  flowschemas: KubernetesResource
+  prioritylevelconfigurations: KubernetesResource
+  validatingadmissionpolicies: KubernetesResource
+  validatingadmissionpolicybindings: KubernetesResource
+  validatingwebhookconfigurations: KubernetesResource
+  mutatingwebhookconfigurations: KubernetesResource
+  mutatingadmissionpolicies: KubernetesResource
+  mutatingadmissionpolicybindings: KubernetesResource
+  resourceslices: KubernetesResource
+  resourceclaims: KubernetesResource
+  deviceclasses: KubernetesResource
+  resourceclaimtemplates: KubernetesResource
+  devicetaintrules: KubernetesResource
+  resourcepoolstatusrequests: KubernetesResource
+  storageversions: KubernetesResource
+  storageversionmigrations: KubernetesResource
+  ingressclasses: KubernetesResource
+  ipaddresses: KubernetesResource
+  servicecidrs: KubernetesResource
   horizontalpodautoscalers: HorizontalPodAutoscaler
   helmrelease: HelmRelease
 }
