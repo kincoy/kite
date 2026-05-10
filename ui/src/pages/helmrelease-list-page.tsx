@@ -16,9 +16,10 @@ const helmReleaseSearchFilter = createSearchFilter<HelmRelease>(
   (release) => release.status?.status
 )
 
+const columnHelper = createColumnHelper<HelmRelease>()
+
 export function HelmReleaseListPage() {
   const { t } = useTranslation()
-  const columnHelper = createColumnHelper<HelmRelease>()
 
   const columns = useMemo(
     () => [
@@ -69,7 +70,7 @@ export function HelmReleaseListPage() {
         ),
       }),
     ],
-    [columnHelper, t]
+    [t]
   )
 
   return (
