@@ -1,7 +1,9 @@
 package resources
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"sort"
 	"strings"
@@ -479,7 +481,9 @@ func (h *HelmReleaseHandler) runUpgrade(c *gin.Context, dryRun bool) (result hel
 	ctx := c.Request.Context()
 	namespace, name := c.Param("namespace"), c.Param("name")
 	var req helmReleaseActionRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil && !errors.Is(err, io.EOF) {
+		return helmReleaseRunResult{}, http.StatusBadRequest, err
+	}
 
 	cfg, err := h.actionConfig(c, namespace)
 	if err != nil {
@@ -560,7 +564,10 @@ func (h *HelmReleaseHandler) runUpgrade(c *gin.Context, dryRun bool) (result hel
 func (h *HelmReleaseHandler) Rollback(c *gin.Context) {
 	namespace, name := c.Param("namespace"), c.Param("name")
 	var req helmReleaseActionRequest
-	_ = c.ShouldBindJSON(&req)
+	if err := c.ShouldBindJSON(&req); err != nil && !errors.Is(err, io.EOF) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	cfg, err := h.actionConfig(c, namespace)
 	if err != nil {
