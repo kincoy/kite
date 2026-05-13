@@ -84,6 +84,48 @@ func (h *AuthHandler) PasswordLogin(c *gin.Context) {
 	h.handleCredentialLogin(c, model.AuthProviderPassword, h.authenticatePasswordUser)
 }
 
+func (h *AuthHandler) CreateSuperUser(c *gin.Context) {
+	var userreq struct {
+		Username string `json:"username" binding:"required"`
+		Password string `json:"password" binding:"required"`
+		Name     string `json:"name"`
+	}
+	if err := c.ShouldBindJSON(&userreq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	uc, err := model.CountUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to count users"})
+		return
+	}
+
+	if uc > 0 {
+		c.JSON(http.StatusForbidden, gin.H{"error": "super user already exists"})
+		return
+	}
+	user := &model.User{
+		Username: userreq.Username,
+		Password: userreq.Password,
+		Name:     userreq.Name,
+		Provider: "password",
+	}
+
+	if err := model.AddSuperUser(user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create super user"})
+		return
+	}
+	jwtToken, err := h.manager.GenerateJWT(user, "")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate JWT"})
+		return
+	}
+	setCookieSecure(c, "auth_token", jwtToken, common.CookieExpirationSeconds)
+	rbac.TriggerSync()
+	c.JSON(http.StatusCreated, user)
+}
+
 func (h *AuthHandler) LDAPLogin(c *gin.Context) {
 	h.handleCredentialLogin(c, model.AuthProviderLDAP, h.authenticateAndSyncLDAPUser)
 }

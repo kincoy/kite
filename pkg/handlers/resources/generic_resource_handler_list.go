@@ -74,6 +74,10 @@ func (h *GenericResourceHandler[T, V]) list(c *gin.Context) (V, error) {
 	}
 
 	if err := cs.K8sClient.List(ctx, objectList, listOpts...); err != nil {
+		if h.Name() == string(common.EndpointSlices) && meta.IsNoMatchError(err) {
+			_ = meta.SetList(objectList, []runtime.Object{})
+			return objectList, nil
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return zero, err
 	}

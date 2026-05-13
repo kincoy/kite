@@ -18,8 +18,7 @@ export function InitCheckRoute({ children }: InitCheckRouteProps) {
     )
   }
 
-  // Check if app is initialized first
-  if (!initCheck?.initialized) {
+  if (initCheck?.initialized === false) {
     return <Navigate to="/setup" replace />
   }
 

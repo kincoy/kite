@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Logo from '@/assets/icon.svg'
+import { useAuth } from '@/contexts/auth-context'
 import {
   IconCheck,
   IconLoader,
@@ -99,6 +100,7 @@ function InitStep({
 export function InitializationPage() {
   const { t } = useTranslation()
   const { data: initCheck, isLoading, refetch } = useInitCheck()
+  const { checkAuth } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -159,6 +161,7 @@ export function InitializationPage() {
         name: name || undefined,
       })
       toast.success(t('initialization.step1.createSuccess'))
+      await checkAuth()
       await refetch()
     } catch (err) {
       setError(

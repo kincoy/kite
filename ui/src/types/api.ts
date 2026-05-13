@@ -22,6 +22,8 @@ import { CronJob, CronJobList, Job, JobList } from 'kubernetes-types/batch/v1'
 import {
   ConfigMap,
   ConfigMapList,
+  Endpoints,
+  EndpointsList,
   Event,
   EventList,
   Namespace,
@@ -39,6 +41,7 @@ import {
   ServiceAccountList,
   ServiceList,
 } from 'kubernetes-types/core/v1'
+import { EndpointSlice, EndpointSliceList } from 'kubernetes-types/discovery/v1'
 import {
   Ingress,
   IngressList,
@@ -308,8 +311,8 @@ export interface ResourcesTypeMap {
   jobs: JobList
   cronjobs: CronJobList
   services: ServiceList
-  endpoints: KubernetesResourceList
-  endpointslices: KubernetesResourceList
+  endpoints: EndpointsList
+  endpointslices: EndpointSliceList
   podtemplates: KubernetesResourceList
   replicationcontrollers: KubernetesResourceList
   limitranges: KubernetesResourceList
@@ -436,8 +439,8 @@ export interface ResourceTypeMap {
   jobs: Job
   cronjobs: CronJob
   services: Service
-  endpoints: KubernetesResource
-  endpointslices: KubernetesResource
+  endpoints: Endpoints
+  endpointslices: EndpointSlice
   podtemplates: KubernetesResource
   replicationcontrollers: KubernetesResource
   limitranges: KubernetesResource

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { apiClient } from '../api-client'
+import { apiClient, authApiClient } from '../api-client'
 import { fetchAPI } from './shared'
 
 // Initialize API types
@@ -55,7 +55,7 @@ export interface CreateUserRequest {
 export const createSuperUser = async (
   userData: CreateUserRequest
 ): Promise<void> => {
-  await apiClient.post('/admin/users/create_super_user', userData)
+  await authApiClient.post('/auth/setup/create_super_user', userData)
 }
 
 // Cluster import for initial setup

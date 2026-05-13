@@ -43,6 +43,7 @@ func registerBaseRoutes(r *gin.RouterGroup) {
 func registerAuthRoutes(r *gin.RouterGroup, authHandler *auth.AuthHandler) {
 	authGroup := r.Group("/api/auth")
 	authGroup.GET("/providers", authHandler.GetProviders)
+	authGroup.POST("/setup/create_super_user", authHandler.CreateSuperUser)
 	authGroup.POST("/login/password", authHandler.PasswordLogin)
 	authGroup.POST("/login/ldap", authHandler.LDAPLogin)
 	authGroup.GET("/login", authHandler.Login)
@@ -59,8 +60,6 @@ func registerUserRoutes(r *gin.RouterGroup, authHandler *auth.AuthHandler) {
 
 func registerAdminRoutes(r *gin.RouterGroup, authHandler *auth.AuthHandler, cm *cluster.ClusterManager, helmChartsHandler *handlers.HelmChartHandler) {
 	adminAPI := r.Group("/api/v1/admin")
-	adminAPI.POST("/users/create_super_user", handlers.CreateSuperUser)
-	adminAPI.POST("/clusters/import", cm.ImportClustersFromKubeconfig)
 	adminAPI.Use(authHandler.RequireAuth(), authHandler.RequireAdmin())
 
 	adminAPI.GET("/audit-logs", handlers.ListAuditLogs)
@@ -79,6 +78,7 @@ func registerAdminRoutes(r *gin.RouterGroup, authHandler *auth.AuthHandler, cm *
 	clusterAPI := adminAPI.Group("/clusters")
 	clusterAPI.GET("/", cm.GetClusterList)
 	clusterAPI.POST("/", cm.CreateCluster)
+	clusterAPI.POST("/import", cm.ImportClustersFromKubeconfig)
 	clusterAPI.PUT("/:id", cm.UpdateCluster)
 	clusterAPI.DELETE("/:id", cm.DeleteCluster)
 
