@@ -29,7 +29,7 @@ features:
     details: 快速切换多个集群，支持按集群独立配置 Prometheus、kubeconfig 自动发现与细粒度访问控制
   - icon: 🔍
     title: 资源管理
-    details: 全资源覆盖、实时 YAML 编辑、资源关系展示、CRD 支持与 Kube Proxy 直连访问
+    details: 全资源覆盖、实时 YAML 编辑、资源关系展示、CRD 与 Helm 支持、Kube Proxy 直连访问
   - icon: 📈
     title: 监控与可观测性
     details: 实时指标、Pod 日志、Pod/Node Web 终端与内置 kubectl 控制台

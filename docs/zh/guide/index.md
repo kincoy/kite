@@ -22,7 +22,7 @@ Kite 是一个轻量级、现代化的 Kubernetes Dashboard，将实时可观测
 
 ### 资源管理
 
-- 全面覆盖：Pods、Deployments、Services、ConfigMaps、Secrets、PVs、PVCs、Nodes 等
+- 全面覆盖：Pods、Deployments、Services、ConfigMaps、Secrets、PVs、PVCs、Nodes、Helm Releases 等
 - 基于 Monaco 编辑器的实时 YAML 编辑（语法高亮和校验）
 - 提供容器、卷、事件和状态等详细视图
 - 资源关系展示（例如 Deployment -> Pods）
