@@ -22,6 +22,7 @@
       "edit": "编辑",
       "enable": "启用",
       "expand": "展开",
+      "expose": "暴露",
       "filter": "筛选",
       "jumpToBottom": "跳到底部",
       "moveDown": "下移",
@@ -482,7 +483,15 @@
     "lastState": "上次状态：{{state}}"
   },
   "deployments": {
-    "title": "Deployments"
+    "title": "Deployments",
+    "exposed": "Service {{service}} 创建成功",
+    "exposeTitle": "暴露 Deployment",
+    "exposeDescription": "为这个 Deployment 创建 Service。",
+    "serviceType": "Service 类型",
+    "servicePort": "Service 端口",
+    "targetPort": "目标端口",
+    "exposeInvalidPort": "端口必须在 1 到 65535 之间",
+    "exposeNoSelector": "Deployment 没有可用于暴露的 selector 标签"
   },
   "daemonsets": {
     "title": "DaemonSets"

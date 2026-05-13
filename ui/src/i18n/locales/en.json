@@ -22,6 +22,7 @@
       "edit": "Edit",
       "enable": "Enable",
       "expand": "Expand",
+      "expose": "Expose",
       "filter": "Filter",
       "jumpToBottom": "Jump to bottom",
       "moveDown": "Move down",
@@ -477,7 +478,15 @@
     "lastState": "last: {{state}}"
   },
   "deployments": {
-    "title": "Deployments"
+    "title": "Deployments",
+    "exposed": "Service {{service}} created",
+    "exposeTitle": "Expose Deployment",
+    "exposeDescription": "Create a Service for this Deployment.",
+    "serviceType": "Service Type",
+    "servicePort": "Service Port",
+    "targetPort": "Target Port",
+    "exposeInvalidPort": "Port must be between 1 and 65535",
+    "exposeNoSelector": "No Deployment selector labels found to expose"
   },
   "daemonsets": {
     "title": "DaemonSets"
