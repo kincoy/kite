@@ -8,11 +8,12 @@ _A modern Kubernetes dashboard_
 
 <a href="https://trendshift.io/repositories/21820" target="_blank"><img src="https://trendshift.io/api/badge/repositories/21820" alt="kite-org%2Fkite | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
-[![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?style=flat&logo=go)](https://golang.org)
-[![React](https://img.shields.io/badge/React-19+-61DAFB?style=flat&logo=react)](https://reactjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org)
+<a href="https://github.com/kite-org/kite/stargazers"><img src="https://img.shields.io/github/stars/kite-org/kite?color=ffcb47&labelColor=black&style=flat-square&logo=github&label=Stars" /></a>
+<a href="https://github.com/kite-org/kite/releases"><img src="https://img.shields.io/github/downloads/kite-org/kite/total?color=369eff&labelColor=black&logo=github&style=flat-square&label=Downloads" /></a>
+<a href="https://github.com/kite-org/kite/graphs/contributors"><img src="https://img.shields.io/github/contributors/kite-org/kite?style=flat-square&logo=github&label=Contributors&labelColor=black" /></a>
 [![License](https://img.shields.io/badge/License-Apache-green.svg)](LICENSE)
 <a href="https://join.slack.com/t/kite-dashboard/shared_invite/zt-3cl9mccs7-eQZ1_t6IoTPHZkxXED1ceg"><img alt="Join Kite" src="https://badgen.net/badge/Slack/Join%20Kite/0abd59?icon=slack" /></a>
+
 
 [**Live Demo**](https://kite-demo.zzde.me) | [**Documentation**](https://kite.zzde.me)
 <br>
