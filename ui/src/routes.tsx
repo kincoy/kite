@@ -25,7 +25,7 @@ export const router = createBrowserRouter(
     {
       path: '/login',
       element: (
-        <InitCheckRoute>
+        <InitCheckRoute allowIncompleteSetup>
           <LoginPage />
         </InitCheckRoute>
       ),
