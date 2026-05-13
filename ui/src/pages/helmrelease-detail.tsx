@@ -362,7 +362,11 @@ function toManifestFiles(
 ): YamlFileTreeItem[] {
   let resourceIndex = 0
 
-  return splitManifestDocuments(manifest).map((doc, index) => {
+  return splitManifestDocuments(manifest).flatMap((doc, index) => {
+    if (isCommentOnlyManifestDocument(doc)) {
+      return []
+    }
+
     const content = trimHelmSourceComment(doc)
     let path = `manifest-${index + 1}.yaml`
 
@@ -394,7 +398,7 @@ function toManifestFiles(
       path = `manifest-${index + 1}.yaml`
     }
 
-    return { path, content }
+    return [{ path, content }]
   })
 }
 
@@ -428,6 +432,12 @@ function trimHelmSourceComment(content: string) {
     return lines.slice(1).join('\n').trim()
   }
   return content
+}
+
+function isCommentOnlyManifestDocument(content: string) {
+  return content
+    .split('\n')
+    .every((line) => !line.trim() || line.trim().startsWith('#'))
 }
 
 function manifestResourcePath(resource: HelmReleaseResource, index: number) {
