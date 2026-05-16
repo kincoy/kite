@@ -54,7 +54,7 @@ export function ActionTable<T>({
                 <Button
                   variant="ghost"
                   size="sm"
-                  aria-label={t('common.fields.actions')}
+                  aria-label={t('common.fields.actions', 'Actions')}
                 >
                   •••
                 </Button>
