@@ -148,7 +148,7 @@ func (h *LogsHandler) watchPods(ctx context.Context, cs *cluster.ClientSet, name
 				continue
 			}
 
-			klog.Infof("Pod %s in namespace %s is %s, event Type: %s", pod.Name, pod.Namespace, pod.Status.Phase, event.Type)
+			klog.V(4).Infof("Pod %s in namespace %s is %s, event Type: %s", pod.Name, pod.Namespace, pod.Status.Phase, event.Type)
 
 			switch event.Type {
 			case watch.Added, watch.Modified:

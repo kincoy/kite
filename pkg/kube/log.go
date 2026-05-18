@@ -137,10 +137,10 @@ func (l *BatchLogHandler) heartbeat(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			klog.Info("Heartbeat stopping due to context cancellation")
+			klog.V(1).Info("Heartbeat stopping due to context cancellation")
 			return
 		case <-l.ctx.Done():
-			klog.Info("Heartbeat stopping due to internal context cancellation")
+			klog.V(1).Info("Heartbeat stopping due to internal context cancellation")
 			return
 		default:
 			var temp []byte
@@ -155,7 +155,7 @@ func (l *BatchLogHandler) heartbeat(ctx context.Context) {
 			if strings.Contains(string(temp), "ping") {
 				err = wsutil.SendMessage(l.conn, "pong", "pong")
 				if err != nil {
-					klog.Infof("Failed to send pong, cancelling internal context: %v", err)
+					klog.V(1).Infof("Failed to send pong, cancelling internal context: %v", err)
 					l.cancel() // Cancel internal context when send fails
 					return
 				}

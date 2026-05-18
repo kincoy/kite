@@ -105,7 +105,7 @@ func (h *SearchHandler) Search(c *gin.Context, query string, limit int) ([]commo
 				hadFailure.Store(true)
 				return nil
 			}
-			klog.Infof("search: resource=%s query=%q results=%d elapsed=%s", entry.name, q, len(results), elapsed)
+			klog.V(4).Infof("search: resource=%s query=%q results=%d elapsed=%s", entry.name, q, len(results), elapsed)
 			resultSlices[i] = results
 			return nil
 		})
@@ -133,7 +133,7 @@ func (h *SearchHandler) Search(c *gin.Context, query string, limit int) ([]commo
 		user := c.MustGet("user").(model.User)
 		h.cache.Add(h.createCacheKey(getSearchClusterName(c), user.Key(), query, limit), allResults)
 	}
-	klog.Infof("search: query=%q resources=%d results=%d cacheable=%t elapsed=%s", query, len(entries), len(allResults), !hadFailure.Load(), time.Since(start))
+	klog.V(4).Infof("search: query=%q resources=%d results=%d cacheable=%t elapsed=%s", query, len(entries), len(allResults), !hadFailure.Load(), time.Since(start))
 	return allResults, nil
 }
 
@@ -157,7 +157,7 @@ func (h *SearchHandler) GlobalSearch(c *gin.Context) {
 	cacheKey := h.createCacheKey(getSearchClusterName(c), user.Key(), query, limit)
 
 	if cachedResults, found := h.cache.Get(cacheKey); found {
-		klog.Infof("search: query=%q cache=exact results=%d", query, len(cachedResults))
+		klog.V(4).Infof("search: query=%q cache=exact results=%d", query, len(cachedResults))
 		response := SearchResponse{
 			Results: cachedResults,
 			Total:   len(cachedResults),
@@ -167,7 +167,7 @@ func (h *SearchHandler) GlobalSearch(c *gin.Context) {
 	}
 
 	if cachedResults, found := h.searchCachedPrefix(getSearchClusterName(c), user.Key(), query, limit); found {
-		klog.Infof("search: query=%q cache=prefix results=%d", query, len(cachedResults))
+		klog.V(4).Infof("search: query=%q cache=prefix results=%d", query, len(cachedResults))
 		h.cache.Add(cacheKey, cachedResults)
 		response := SearchResponse{
 			Results: cachedResults,

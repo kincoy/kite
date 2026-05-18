@@ -54,7 +54,7 @@ func (h *ResourceApplyHandler) ApplyResource(c *gin.Context) {
 			break
 		}
 		if err != nil {
-			klog.Errorf("Failed to read YAML document: %v", err)
+			klog.V(1).Infof("Failed to read YAML document: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid YAML format: " + err.Error()})
 			return
 		}
@@ -67,7 +67,7 @@ func (h *ResourceApplyHandler) ApplyResource(c *gin.Context) {
 		obj := &unstructured.Unstructured{}
 		_, _, err = decodeUniversal.Decode(rawDoc, nil, obj)
 		if err != nil {
-			klog.Errorf("Failed to decode YAML: %v", err)
+			klog.V(1).Infof("Failed to decode YAML: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid YAML format: " + err.Error()})
 			return
 		}
