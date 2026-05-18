@@ -542,6 +542,7 @@ func (h *HelmReleaseHandler) GetAutoUpgrade(c *gin.Context) {
 
 func (h *HelmReleaseHandler) UpdateAutoUpgrade(c *gin.Context) {
 	cs := c.MustGet("cluster").(*cluster.ClientSet)
+	user := c.MustGet("user").(model.User)
 	namespace, name := c.Param("namespace"), c.Param("name")
 	var req helmReleaseAutoUpgradeRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -600,6 +601,7 @@ func (h *HelmReleaseHandler) UpdateAutoUpgrade(c *gin.Context) {
 			ClusterName: cs.Name,
 			Type:        scheduler.HelmReleaseAutoUpgradeTaskType,
 			Key:         key,
+			CreatorID:   user.ID,
 		}
 	case queryErr != nil:
 		err = queryErr
@@ -609,6 +611,9 @@ func (h *HelmReleaseHandler) UpdateAutoUpgrade(c *gin.Context) {
 		task.Key = key
 	}
 	task.Name = taskName
+	if task.CreatorID == 0 {
+		task.CreatorID = user.ID
+	}
 	task.Enabled = req.Enabled
 	task.ScheduleType = req.ScheduleType
 	task.IntervalMinutes = req.IntervalMinutes

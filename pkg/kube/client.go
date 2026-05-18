@@ -30,6 +30,8 @@ import (
 
 var runtimeScheme = runtime.NewScheme()
 
+const cacheSyncTimeout = 10 * time.Second
+
 func init() {
 	ctrllog.SetLogger(controllerRuntimeLogger(klog.NewKlogr()))
 	_ = scheme.AddToScheme(runtimeScheme)
@@ -153,7 +155,9 @@ func NewClient(config *rest.Config) (*K8sClient, error) {
 				fmt.Printf("Error starting manager: %v\n", err)
 			}
 		}()
-		if !mgr.GetCache().WaitForCacheSync(ctx) {
+		syncCtx, syncCancel := context.WithTimeout(ctx, cacheSyncTimeout)
+		defer syncCancel()
+		if !mgr.GetCache().WaitForCacheSync(syncCtx) {
 			cancel()
 			return nil, fmt.Errorf("failed to wait for cache sync")
 		}

@@ -110,10 +110,6 @@ func InitDB() {
 			panic("failed to migrate database: " + err.Error())
 		}
 	}
-	if _, err = EnsureSystemUser(); err != nil {
-		panic("failed to ensure system user: " + err.Error())
-	}
-
 	sqldb, err := DB.DB()
 	if err == nil {
 		sqldb.SetMaxOpenConns(common.DBMaxOpenConns)

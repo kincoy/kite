@@ -41,9 +41,8 @@ func (e *helmReleaseAutoUpgradeExecutor) Run(ctx context.Context, task model.Sch
 	if err := json.Unmarshal([]byte(task.Payload), &payload); err != nil {
 		return err
 	}
-	systemUser, err := model.EnsureSystemUser()
-	if err != nil {
-		return err
+	if task.CreatorID == 0 {
+		return fmt.Errorf("scheduled task creator is missing")
 	}
 	releaseName := payload.ResourceName
 	cs, err := e.cm.GetClientSet(task.ClusterName)
@@ -82,7 +81,7 @@ func (e *helmReleaseAutoUpgradeExecutor) Run(ctx context.Context, task model.Sch
 	defer func() {
 		helmutil.RecordReleaseHistory(
 			cs.Name,
-			systemUser.ID,
+			task.CreatorID,
 			"auto",
 			"upgrade",
 			releaseName,
