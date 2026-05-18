@@ -156,13 +156,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const hasGlobalSidebarPreference =
     bootstrap?.hasGlobalSidebarPreference ??
     globalSidebarPreference.trim() !== ''
-  const credentialProviders = bootstrap?.auth.credentialProviders ?? []
-  const oauthProviders = bootstrap?.auth.oauthProviders ?? []
   const loginPrompt = bootstrap?.auth.loginPrompt || ''
   const capabilities = bootstrap?.capabilities ?? defaultCapabilities
 
-  const value = useMemo(
-    () => ({
+  const value = useMemo(() => {
+    const credentialProviders = bootstrap?.auth.credentialProviders ?? []
+    const oauthProviders = bootstrap?.auth.oauthProviders ?? []
+
+    return {
       user,
       isLoading,
       hasGlobalSidebarPreference,
@@ -176,23 +177,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       logout,
       checkAuth,
       refreshToken,
-    }),
-    [
-      user,
-      isLoading,
-      hasGlobalSidebarPreference,
-      globalSidebarPreference,
-      credentialProviders,
-      oauthProviders,
-      loginPrompt,
-      capabilities,
-      login,
-      loginWithCredentials,
-      logout,
-      checkAuth,
-      refreshToken,
-    ]
-  )
+    }
+  }, [
+    user,
+    isLoading,
+    hasGlobalSidebarPreference,
+    globalSidebarPreference,
+    bootstrap?.auth.credentialProviders,
+    bootstrap?.auth.oauthProviders,
+    loginPrompt,
+    capabilities,
+    login,
+    loginWithCredentials,
+    logout,
+    checkAuth,
+    refreshToken,
+  ])
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
