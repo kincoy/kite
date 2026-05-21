@@ -101,7 +101,11 @@ export function ResponsiveTabs({
           )}
         >
           {tabs.map((tab) => (
-            <TabsTrigger key={tab.value} value={tab.value}>
+            <TabsTrigger
+              key={tab.value}
+              value={tab.value}
+              className="dark:data-[state=active]:border-primary dark:data-[state=active]:bg-transparent dark:data-[state=active]:text-primary"
+            >
               {tab.label}
             </TabsTrigger>
           ))}
