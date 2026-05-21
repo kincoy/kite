@@ -26,7 +26,7 @@ export function appendCurrentClusterParam(params: URLSearchParams) {
 export function appendCurrentClusterHeader(headers: Record<string, string>) {
   const currentCluster = getCurrentCluster()
   if (currentCluster) {
-    headers[CURRENT_CLUSTER_HEADER_KEY] = currentCluster
+    headers[CURRENT_CLUSTER_HEADER_KEY] = encodeURIComponent(currentCluster)
   }
 }
 

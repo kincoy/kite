@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/zxh326/kite/pkg/cluster"
@@ -25,6 +26,9 @@ func ClusterMiddleware(cm *cluster.ClusterManager) gin.HandlerFunc {
 			if clusterName == "" {
 				clusterName, _ = c.Cookie(ClusterNameHeader)
 			}
+		}
+		if decoded, err := url.QueryUnescape(clusterName); err == nil {
+			clusterName = decoded
 		}
 		cluster, err := cm.GetClientSet(clusterName)
 		if err != nil {
