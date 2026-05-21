@@ -3,6 +3,7 @@ package helmutil
 import (
 	"github.com/zxh326/kite/pkg/common"
 	"helm.sh/helm/v4/pkg/action"
+	"helm.sh/helm/v4/pkg/kube"
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/discovery/cached/memory"
@@ -15,6 +16,11 @@ import (
 type restClientGetter struct {
 	config    *rest.Config
 	namespace string
+}
+
+func init() {
+	// Match Helm CLI's server-side apply field manager.
+	kube.ManagedFieldsManager = "helm"
 }
 
 func NewActionConfig(config *rest.Config, namespace string) (*action.Configuration, error) {
