@@ -57,7 +57,7 @@ export function PodListPage() {
           )
         },
       }),
-      columnHelper.accessor((row) => row.status?.phase, {
+      columnHelper.accessor((row) => getPodStatus(row).reason, {
         header: t('common.fields.status'),
         enableColumnFilter: true,
         cell: ({ row }) => {
