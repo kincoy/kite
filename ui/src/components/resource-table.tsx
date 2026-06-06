@@ -16,6 +16,7 @@ import { toast } from 'sonner'
 import { ResourceType } from '@/types/api'
 import { deleteResource } from '@/lib/api'
 import { getResourceMetadata } from '@/lib/resource-catalog'
+import { useCluster } from '@/hooks/use-cluster'
 import { useResourceTableData } from '@/hooks/use-resource-table-data'
 import { useResourceTableState } from '@/hooks/use-resource-table-state'
 import { Badge } from '@/components/ui/badge'
@@ -47,7 +48,15 @@ export interface ResourceTableProps<T> {
   defaultHiddenColumns?: string[] // Columns to hide by default
 }
 
-export function ResourceTable<T>({
+export function ResourceTable<T>(props: ResourceTableProps<T>) {
+  const { currentCluster } = useCluster()
+  return React.createElement(ResourceTableContent<T>, {
+    ...props,
+    key: currentCluster || '',
+  })
+}
+
+function ResourceTableContent<T>({
   resourceName,
   resourceType,
   columns,
