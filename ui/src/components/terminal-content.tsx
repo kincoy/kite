@@ -105,9 +105,26 @@ export function Terminal({
   const pingTimerRef = useRef<NodeJS.Timeout | null>(null)
   const { t } = useTranslation()
 
-  // Initialize pod/container state on props change
+  // Keep user selection unless the current pod is no longer available.
   useEffect(() => {
-    setSelectedPod(podName || pods?.[0]?.metadata?.name || '')
+    if (podName) {
+      setSelectedPod(podName)
+      return
+    }
+
+    if (!pods) {
+      return
+    }
+
+    setSelectedPod((current) => {
+      if (pods.length === 0) {
+        return ''
+      }
+      if (current && pods.some((pod) => pod.metadata?.name === current)) {
+        return current
+      }
+      return pods[0]?.metadata?.name || ''
+    })
   }, [podName, pods])
 
   useEffect(() => {

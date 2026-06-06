@@ -106,7 +106,10 @@ export function useWebSocket(
       wsRef.current.onclose = null
       wsRef.current.onerror = null
       wsRef.current.onmessage = null
-      if (wsRef.current.readyState === WebSocket.OPEN) {
+      if (
+        wsRef.current.readyState === WebSocket.OPEN ||
+        wsRef.current.readyState === WebSocket.CONNECTING
+      ) {
         wsRef.current.close()
       }
       wsRef.current = null
@@ -374,21 +377,21 @@ export function useWebSocket(
   // Main effect for connection lifecycle
   useEffect(() => {
     isMountedRef.current = true
+    let timer: ReturnType<typeof setTimeout> | undefined
 
     if (optsRef.current.enabled) {
       // Add a small delay to prevent rapid reconnections
-      const timer = setTimeout(() => {
+      timer = setTimeout(() => {
         if (isMountedRef.current && optsRef.current.enabled) {
           connect()
         }
       }, 100)
-
-      return () => {
-        clearTimeout(timer)
-      }
     }
 
     return () => {
+      if (timer) {
+        clearTimeout(timer)
+      }
       isMountedRef.current = false
       cleanupResources()
     }
