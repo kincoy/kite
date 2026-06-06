@@ -8,7 +8,7 @@ export function getCurrentCluster() {
 
 export function setCurrentCluster(clusterName: string) {
   localStorage.setItem(CURRENT_CLUSTER_STORAGE_KEY, clusterName)
-  document.cookie = `${CURRENT_CLUSTER_HEADER_KEY}=${clusterName}; path=/`
+  document.cookie = `${CURRENT_CLUSTER_HEADER_KEY}=${encodeURIComponent(clusterName)}; path=/`
 }
 
 export function clearCurrentCluster() {

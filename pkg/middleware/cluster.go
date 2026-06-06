@@ -19,16 +19,20 @@ const (
 func ClusterMiddleware(cm *cluster.ClusterManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		clusterName := c.GetHeader(ClusterNameHeader)
-		if clusterName == "" {
+		if clusterName != "" {
+			if decoded, err := url.PathUnescape(clusterName); err == nil {
+				clusterName = decoded
+			}
+		} else {
 			if v, ok := c.GetQuery(ClusterNameHeader); ok {
 				clusterName = v
 			}
 			if clusterName == "" {
 				clusterName, _ = c.Cookie(ClusterNameHeader)
+				if decoded, err := url.PathUnescape(clusterName); err == nil {
+					clusterName = decoded
+				}
 			}
-		}
-		if decoded, err := url.QueryUnescape(clusterName); err == nil {
-			clusterName = decoded
 		}
 		cluster, err := cm.GetClientSet(clusterName)
 		if err != nil {
