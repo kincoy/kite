@@ -2,7 +2,6 @@ import { useMemo, useState, type FormEvent } from 'react'
 import {
   IconCircleCheckFilled,
   IconExclamationCircle,
-  IconExternalLink,
 } from '@tabler/icons-react'
 import * as yaml from 'js-yaml'
 import type { Container, Pod } from 'kubernetes-types/core/v1'
@@ -39,7 +38,6 @@ import {
   resourceMetadataList,
   type ResourceMetadata,
 } from '@/lib/resource-metadata'
-import { withSubPath } from '@/lib/subpath'
 import {
   formatDate,
   getAge,
@@ -74,6 +72,7 @@ import {
   MetadataListCard,
 } from '@/components/pod-overview-sidebar'
 import { PodStatusIcon } from '@/components/pod-status-icon'
+import { ResourceIframeDialogContent } from '@/components/resource-iframe-dialog-content'
 import { SimpleTable } from '@/components/simple-table'
 import { SimpleYamlEditor } from '@/components/simple-yaml-editor'
 import { WorkloadSummaryCard } from '@/components/workload-overview-parts'
@@ -182,24 +181,7 @@ function HelmReleaseResourceLink({
           {label}
         </button>
       </DialogTrigger>
-      <DialogContent className="!h-[calc(100dvh-1rem)] !max-w-[calc(100vw-1rem)] flex min-h-0 flex-col gap-0 p-0 md:!h-[80%] md:!max-w-[80%]">
-        <DialogHeader className="flex flex-row items-center justify-between border-b px-4 py-3 pr-14">
-          <DialogTitle>{resource.kind}</DialogTitle>
-          <a href={withSubPath(path)} target="_blank" rel="noopener noreferrer">
-            <Button
-              variant="outline"
-              size="icon"
-              aria-label="Open resource in new tab"
-            >
-              <IconExternalLink size={12} />
-            </Button>
-          </a>
-        </DialogHeader>
-        <iframe
-          src={`${withSubPath(path)}?iframe=true`}
-          className="min-h-0 w-full flex-grow border-none"
-        />
-      </DialogContent>
+      <ResourceIframeDialogContent title={resource.kind} path={path} />
     </Dialog>
   )
 }
