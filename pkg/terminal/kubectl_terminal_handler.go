@@ -38,8 +38,6 @@ func (h *KubectlTerminalHandler) HandleKubectlTerminalWebSocket(c *gin.Context) 
 	user := c.MustGet("user").(model.User)
 
 	wsutil.Serve(c.Writer, c.Request, func(ws *wsutil.Session) {
-		defer ws.Close()
-
 		// Only admin users can use the kubectl terminal
 		if !rbac.UserHasRole(user, model.DefaultAdminRole.Name) {
 			ws.SendErrorMessage("kubectl terminal is only available to admin users")

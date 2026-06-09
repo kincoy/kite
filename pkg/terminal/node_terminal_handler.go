@@ -41,7 +41,6 @@ func (h *NodeTerminalHandler) HandleNodeTerminalWebSocket(c *gin.Context) {
 	user := c.MustGet("user").(model.User)
 
 	wsutil.Serve(c.Writer, c.Request, func(ws *wsutil.Session) {
-		defer ws.Close()
 		ctx := ws.Context
 		if !rbac.CanAccess(user, string(common.Nodes), "exec", cs.Name, "") {
 			ws.SendErrorMessage(rbac.NoAccess(user.Key(), string(common.VerbExec), string(common.Nodes), "", cs.Name))

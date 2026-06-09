@@ -102,7 +102,6 @@ export function Terminal({
     lastUpdate: Date.now(),
   })
   const speedUpdateTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const pingTimerRef = useRef<NodeJS.Timeout | null>(null)
   const { t } = useTranslation()
 
   // Keep user selection unless the current pod is no longer available.
@@ -376,15 +375,6 @@ export function Terminal({
         }
       }, 500)
 
-      if (pingTimerRef.current) clearInterval(pingTimerRef.current)
-      pingTimerRef.current = setInterval(() => {
-        if (websocket.readyState === WebSocket.OPEN) {
-          const pingMessage = JSON.stringify({ type: 'ping' })
-          websocket.send(pingMessage)
-          updateNetworkStats(new Blob([pingMessage]).size, true)
-        }
-      }, 30000)
-
       terminal.writeln(
         `\x1b[32mConnected to ${type === 'kubectl' ? 'kubectl' : type} terminal!\x1b[0m`
       )
@@ -413,9 +403,6 @@ export function Terminal({
             )
             setIsConnected(false)
             break
-          case 'pong':
-            // Ignore pong messages from server
-            break
         }
       } catch (err) {
         console.error('Failed to parse WebSocket message:', err)
@@ -434,10 +421,6 @@ export function Terminal({
       if (speedUpdateTimerRef.current) {
         clearInterval(speedUpdateTimerRef.current)
         speedUpdateTimerRef.current = null
-      }
-      if (pingTimerRef.current) {
-        clearInterval(pingTimerRef.current)
-        pingTimerRef.current = null
       }
       if (event.code !== 1000) {
         terminal.writeln('\x1b[31mConnection closed unexpectedly\x1b[0m')
@@ -504,7 +487,6 @@ export function Terminal({
       websocket.close()
       if (speedUpdateTimerRef.current)
         clearInterval(speedUpdateTimerRef.current)
-      if (pingTimerRef.current) clearInterval(pingTimerRef.current)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
