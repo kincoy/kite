@@ -544,7 +544,6 @@ export const useLogsWebSocket = (
     },
     {
       enabled: options?.enabled !== false,
-      pingInterval: 20000, // 20 seconds for logs
       reconnectOnClose: true,
       maxReconnectAttempts: 3,
       reconnectInterval: 5000,

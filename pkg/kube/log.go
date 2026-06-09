@@ -6,11 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 	"sync"
 
 	"github.com/zxh326/kite/pkg/wsutil"
-	"golang.org/x/net/websocket"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/klog/v2"
 )
@@ -22,7 +20,7 @@ type PodLogStream struct {
 }
 
 type BatchLogHandler struct {
-	conn      *websocket.Conn
+	conn      *wsutil.Conn
 	mu        sync.RWMutex
 	pods      map[string]*PodLogStream // key: namespace/name; guarded by mu
 	k8sClient *K8sClient
@@ -31,7 +29,7 @@ type BatchLogHandler struct {
 	cancel    context.CancelFunc
 }
 
-func NewBatchLogHandler(conn *websocket.Conn, client *K8sClient, opts *corev1.PodLogOptions) *BatchLogHandler {
+func NewBatchLogHandler(conn *wsutil.Conn, client *K8sClient, opts *corev1.PodLogOptions) *BatchLogHandler {
 	ctx, cancel := context.WithCancel(context.Background())
 	l := &BatchLogHandler{
 		conn:      conn,
@@ -143,22 +141,13 @@ func (l *BatchLogHandler) heartbeat(ctx context.Context) {
 			klog.V(1).Info("Heartbeat stopping due to internal context cancellation")
 			return
 		default:
-			var temp []byte
-			err := websocket.Message.Receive(l.conn, &temp)
+			_, _, err := l.conn.ReadMessage()
 			if err != nil {
 				if !errors.Is(err, io.EOF) {
 					klog.Errorf("WebSocket connection error in heartbeat, cancelling internal context: %v", err)
 				}
 				l.cancel() // Cancel internal context when connection is lost
 				return
-			}
-			if strings.Contains(string(temp), "ping") {
-				err = wsutil.SendMessage(l.conn, "pong", "pong")
-				if err != nil {
-					klog.V(1).Infof("Failed to send pong, cancelling internal context: %v", err)
-					l.cancel() // Cancel internal context when send fails
-					return
-				}
 			}
 		}
 	}
