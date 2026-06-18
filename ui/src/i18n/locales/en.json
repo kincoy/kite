@@ -602,6 +602,7 @@
     "signingIn": "Signing in...",
     "signInWithPassword": "Sign In with Password",
     "signInWithLdap": "Sign In with LDAP",
+    "signInWithPasskey": "Sign in with a passkey",
     "tabs": {
       "ldap": "LDAP"
     },

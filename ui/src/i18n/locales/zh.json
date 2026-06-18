@@ -607,6 +607,7 @@
     "signingIn": "登录中...",
     "signInWithPassword": "密码登录",
     "signInWithLdap": "LDAP 登录",
+    "signInWithPasskey": "使用 Passkey 登录",
     "tabs": {
       "ldap": "LDAP"
     },

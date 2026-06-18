@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
 import Logo from '@/assets/icon.svg'
 import { useAuth } from '@/contexts/auth-context'
+import { IconEye, IconEyeOff, IconLock, IconUser } from '@tabler/icons-react'
 import { useTranslation } from 'react-i18next'
 import { Navigate, useSearchParams } from 'react-router-dom'
 
@@ -43,6 +44,7 @@ export function LoginPage() {
   const [loginLoading, setLoginLoading] = useState<string | null>(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [mfaCode, setMfaCode] = useState('')
   const [mfaRequired, setMfaRequired] = useState(false)
   const [credentialError, setCredentialError] = useState<string | null>(null)
@@ -59,6 +61,7 @@ export function LoginPage() {
     credentialProviders.length +
     oauthProviders.length +
     (passkeySupported ? 1 : 0)
+  const hasAlternativeLogin = oauthProviders.length > 0 || passkeySupported
   const loginPromptContent = loginPrompt.trim()
   const loginPromptLines = loginPromptContent
     .split('\n')
@@ -357,35 +360,59 @@ export function LoginPage() {
                           <Label htmlFor="username">
                             {t('common.fields.username')}
                           </Label>
-                          <Input
-                            id="username"
-                            type="text"
-                            placeholder={t('login.enterUsername')}
-                            value={username}
-                            onChange={(e) => {
-                              setUsername(e.target.value)
-                              setMfaRequired(false)
-                              setMfaCode('')
-                            }}
-                            required
-                          />
+                          <div className="relative">
+                            <IconUser className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                              id="username"
+                              type="text"
+                              placeholder={t('login.enterUsername')}
+                              value={username}
+                              onChange={(e) => {
+                                setUsername(e.target.value)
+                                setMfaRequired(false)
+                                setMfaCode('')
+                              }}
+                              className="pl-9"
+                              required
+                            />
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="password">
                             {t('common.fields.password')}
                           </Label>
-                          <Input
-                            id="password"
-                            type="password"
-                            placeholder={t('login.enterPassword')}
-                            value={password}
-                            onChange={(e) => {
-                              setPassword(e.target.value)
-                              setMfaRequired(false)
-                              setMfaCode('')
-                            }}
-                            required
-                          />
+                          <div className="relative">
+                            <IconLock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                            <Input
+                              id="password"
+                              type={showPassword ? 'text' : 'password'}
+                              placeholder={t('login.enterPassword')}
+                              value={password}
+                              onChange={(e) => {
+                                setPassword(e.target.value)
+                                setMfaRequired(false)
+                                setMfaCode('')
+                              }}
+                              className="pl-9 pr-10"
+                              required
+                            />
+                            <button
+                              type="button"
+                              aria-label={
+                                showPassword
+                                  ? t('login.hidePassword', 'Hide password')
+                                  : t('login.showPassword', 'Show password')
+                              }
+                              onClick={() => setShowPassword((show) => !show)}
+                              className="absolute right-1 top-1/2 inline-flex size-7 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            >
+                              {showPassword ? (
+                                <IconEyeOff className="h-4 w-4" />
+                              ) : (
+                                <IconEye className="h-4 w-4" />
+                              )}
+                            </button>
+                          </div>
                         </div>
                         {credentialsProvider === 'password' && mfaRequired && (
                           <div className="space-y-2">
@@ -412,7 +439,7 @@ export function LoginPage() {
                         <Button
                           type="submit"
                           disabled={loginLoading !== null}
-                          className="w-full"
+                          className="w-full h-10"
                         >
                           {loginLoading === credentialsProvider ? (
                             <div className="flex items-center space-x-2">
@@ -429,51 +456,9 @@ export function LoginPage() {
                     </div>
                   )}
 
-                  {oauthProviders.length > 0 &&
-                    (credentialProviders.length > 0 || passkeySupported) && (
-                      <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="px-2 text-muted-foreground bg-card rounded">
-                            {t('login.orContinueWith')}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-
-                  {oauthProviders.map((provider) => (
-                    <Button
-                      key={provider}
-                      onClick={() => handleLogin(provider)}
-                      disabled={loginLoading !== null}
-                      className="w-full h-10"
-                      variant="outline"
-                    >
-                      {loginLoading === provider ? (
-                        <div className="flex items-center space-x-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2"></div>
-                          <span>{t('login.signingIn')}</span>
-                        </div>
-                      ) : (
-                        <div className="flex items-center space-x-2">
-                          <span>
-                            {t('login.signInWith', {
-                              provider:
-                                provider.charAt(0).toUpperCase() +
-                                provider.slice(1),
-                            })}
-                          </span>
-                        </div>
-                      )}
-                    </Button>
-                  ))}
-
-                  {passkeySupported && (
-                    <>
-                      {(credentialProviders.length > 0 ||
-                        oauthProviders.length > 0) && (
+                  {hasAlternativeLogin && (
+                    <div className="space-y-3">
+                      {credentialProviders.length > 0 && (
                         <div className="relative">
                           <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t" />
@@ -485,30 +470,62 @@ export function LoginPage() {
                           </div>
                         </div>
                       )}
-                      <div className="flex justify-center pt-2">
-                        <Button
-                          type="button"
-                          onClick={handlePasskeyLogin}
-                          disabled={loginLoading !== null}
-                          className="h-auto px-0 py-0 text-sm font-normal text-primary"
-                          variant="link"
-                        >
-                          {loginLoading === 'passkey' ? (
-                            <span className="flex items-center space-x-2">
-                              <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></span>
-                              <span>{t('login.signingIn')}</span>
-                            </span>
-                          ) : (
-                            <span>Sign in with a passkey</span>
+
+                      <div className="space-y-2">
+                        {oauthProviders.map((provider) => (
+                          <Button
+                            key={provider}
+                            type="button"
+                            onClick={() => handleLogin(provider)}
+                            disabled={loginLoading !== null}
+                            className="w-full h-10 text-foreground"
+                            variant="outline"
+                          >
+                            {loginLoading === provider ? (
+                              <span className="flex items-center space-x-2">
+                                <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></span>
+                                <span>{t('login.signingIn')}</span>
+                              </span>
+                            ) : (
+                              <span>
+                                {t('login.signInWith', {
+                                  provider:
+                                    provider.charAt(0).toUpperCase() +
+                                    provider.slice(1),
+                                })}
+                              </span>
+                            )}
+                          </Button>
+                        ))}
+
+                        {passkeySupported && (
+                          <Button
+                            type="button"
+                            onClick={handlePasskeyLogin}
+                            disabled={loginLoading !== null}
+                            className="w-full h-10 text-foreground"
+                            variant="outline"
+                          >
+                            {loginLoading === 'passkey' ? (
+                              <span className="flex items-center space-x-2">
+                                <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></span>
+                                <span>{t('login.signingIn')}</span>
+                              </span>
+                            ) : (
+                              <span>{t('login.signInWithPasskey')}</span>
+                            )}
+                          </Button>
+                        )}
+                        {credentialProviders.length === 0 &&
+                          credentialError && (
+                            <Alert variant="destructive">
+                              <AlertDescription>
+                                {credentialError}
+                              </AlertDescription>
+                            </Alert>
                           )}
-                        </Button>
                       </div>
-                      {credentialProviders.length === 0 && credentialError && (
-                        <Alert variant="destructive">
-                          <AlertDescription>{credentialError}</AlertDescription>
-                        </Alert>
-                      )}
-                    </>
+                    </div>
                   )}
                 </div>
               )}
