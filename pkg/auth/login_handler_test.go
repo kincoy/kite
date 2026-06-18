@@ -10,47 +10,22 @@ import (
 	"github.com/zxh326/kite/pkg/common"
 )
 
-func TestCredentialLoginLimiterDoesNotBypassSpoofedLoopbackClientIP(t *testing.T) {
+func TestCredentialLoginLimiterBlocksLoopbackClientIP(t *testing.T) {
 	limiter := &credentialLoginAttemptLimiter{
 		attempts: map[string]credentialLoginAttemptState{},
 	}
 
 	clientIP := "127.0.0.1"
 	for i := 0; i < credentialLoginMaxFailures; i++ {
-		if limiter.recordFailure(clientIP, false) {
+		if limiter.recordFailure(clientIP) {
 			t.Fatalf("recordFailure() blocked after %d failures, want not blocked yet", i+1)
 		}
 	}
-	if !limiter.recordFailure(clientIP, false) {
-		t.Fatalf("recordFailure() did not block spoofed loopback client IP")
+	if !limiter.recordFailure(clientIP) {
+		t.Fatalf("recordFailure() did not block loopback client IP")
 	}
-	if !limiter.isBlocked(clientIP, false) {
-		t.Fatalf("isBlocked() = false, want true for spoofed loopback client IP")
-	}
-}
-
-func TestCredentialLoginLimiterBypassesActualLoopbackRemoteIP(t *testing.T) {
-	limiter := &credentialLoginAttemptLimiter{
-		attempts: map[string]credentialLoginAttemptState{},
-	}
-
-	clientIP := "127.0.0.1"
-	for i := 0; i <= credentialLoginMaxFailures; i++ {
-		if limiter.recordFailure(clientIP, true) {
-			t.Fatalf("recordFailure() blocked actual loopback remote IP")
-		}
-	}
-	if limiter.isBlocked(clientIP, true) {
-		t.Fatalf("isBlocked() = true, want false for actual loopback remote IP")
-	}
-}
-
-func TestCredentialLoginRemoteIP(t *testing.T) {
-	if got := credentialLoginRemoteIP("127.0.0.1:12345"); got != "127.0.0.1" {
-		t.Fatalf("credentialLoginRemoteIP() = %q, want 127.0.0.1", got)
-	}
-	if got := credentialLoginRemoteIP("2001:db8::1"); got != "2001:db8::1" {
-		t.Fatalf("credentialLoginRemoteIP() = %q, want unchanged IPv6 address", got)
+	if !limiter.isBlocked(clientIP) {
+		t.Fatalf("isBlocked() = false, want true for loopback client IP")
 	}
 }
 

@@ -151,8 +151,7 @@ func (h *AuthHandler) handleCredentialLogin(c *gin.Context, provider string, aut
 		return
 	}
 	clientIP := c.ClientIP()
-	bypassCredentialLoginLimiter := isCredentialLoginLoopbackIP(credentialLoginRemoteIP(c.Request.RemoteAddr))
-	if credentialLoginAttempts.isBlocked(clientIP, bypassCredentialLoginLimiter) {
+	if credentialLoginAttempts.isBlocked(clientIP) {
 		c.JSON(http.StatusTooManyRequests, gin.H{"error": tooManyCredentialLoginAttemptsError})
 		return
 	}
@@ -161,7 +160,7 @@ func (h *AuthHandler) handleCredentialLogin(c *gin.Context, provider string, aut
 	if err != nil {
 		errMsg := fmt.Sprintf("%s login failed for %s: %v", strings.ToUpper(provider), username, err)
 		if isCredentialFailure(err) {
-			if shouldRecordCredentialLoginFailure(provider, err) && credentialLoginAttempts.recordFailure(clientIP, bypassCredentialLoginLimiter) {
+			if shouldRecordCredentialLoginFailure(provider, err) && credentialLoginAttempts.recordFailure(clientIP) {
 				c.JSON(http.StatusTooManyRequests, gin.H{"error": tooManyCredentialLoginAttemptsError})
 				return
 			}
@@ -178,7 +177,7 @@ func (h *AuthHandler) handleCredentialLogin(c *gin.Context, provider string, aut
 			return
 		}
 		if !mfa.Verify(string(user.MFASecret), req.MFACode) {
-			if credentialLoginAttempts.recordFailure(clientIP, bypassCredentialLoginLimiter) {
+			if credentialLoginAttempts.recordFailure(clientIP) {
 				c.JSON(http.StatusTooManyRequests, gin.H{"error": tooManyCredentialLoginAttemptsError})
 				return
 			}
