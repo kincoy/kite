@@ -30,8 +30,8 @@ var credentialLoginAttempts = &credentialLoginAttemptLimiter{
 	attempts: map[string]credentialLoginAttemptState{},
 }
 
-func (l *credentialLoginAttemptLimiter) isBlocked(ip string) bool {
-	if isCredentialLoginLoopbackIP(ip) {
+func (l *credentialLoginAttemptLimiter) isBlocked(ip string, bypass bool) bool {
+	if bypass {
 		return false
 	}
 
@@ -57,8 +57,8 @@ func (l *credentialLoginAttemptLimiter) isBlocked(ip string) bool {
 	return false
 }
 
-func (l *credentialLoginAttemptLimiter) recordFailure(ip string) bool {
-	if isCredentialLoginLoopbackIP(ip) {
+func (l *credentialLoginAttemptLimiter) recordFailure(ip string, bypass bool) bool {
+	if bypass {
 		return false
 	}
 
@@ -92,6 +92,13 @@ func recentCredentialLoginFailures(failures []time.Time, now time.Time) []time.T
 		}
 	}
 	return recent
+}
+
+func credentialLoginRemoteIP(remoteAddr string) string {
+	if host, _, err := net.SplitHostPort(remoteAddr); err == nil {
+		return host
+	}
+	return remoteAddr
 }
 
 func isCredentialLoginLoopbackIP(ip string) bool {

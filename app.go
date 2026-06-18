@@ -49,6 +49,7 @@ func initializeApp(ctx context.Context) (*cluster.ClusterManager, error) {
 
 func buildEngine(cm *cluster.ClusterManager) *gin.Engine {
 	r := gin.New()
+	configureTrustedProxies(r)
 	r.Use(middleware.Metrics())
 	if !common.DisableGZIP {
 		klog.Info("GZIP compression is enabled")
@@ -63,4 +64,14 @@ func buildEngine(cm *cluster.ClusterManager) *gin.Engine {
 	setupStatic(r)
 
 	return r
+}
+
+func configureTrustedProxies(r *gin.Engine) {
+	var trustedProxies []string
+	if len(common.TrustedProxies) > 0 {
+		trustedProxies = common.TrustedProxies
+	}
+	if err := r.SetTrustedProxies(trustedProxies); err != nil {
+		klog.Fatalf("Failed to configure trusted proxies: %v", err)
+	}
 }

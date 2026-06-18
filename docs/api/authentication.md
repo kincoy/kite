@@ -2,6 +2,12 @@
 
 Kite supports programmatic access through API keys. An API key authenticates as a special user and follows the same RBAC model as interactive users.
 
+## Login attempt blocking
+
+Credential-based logins are temporarily blocked by client IP after repeated invalid password or MFA attempts. Kite allows up to 10 failures within 1 minute; the next failure blocks further credential login attempts from that client IP for 5 minutes.
+
+When Kite runs behind an ingress or load balancer, the client IP used by this limiter depends on `TRUSTED_PROXIES`. See [Environment Variables](/config/env#environment-variables) for how to configure trusted proxy ranges.
+
 ## API key format
 
 The full API key format is:

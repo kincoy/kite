@@ -365,9 +365,19 @@ export function GlobalSearch({ open, onOpenChange }: GlobalSearchProps) {
     const searchQuery = query.trim()
     const favoriteResults = favorites || []
     const previousResults = lastSearchResults || []
+    const isLabelQuery = searchQuery.includes(':') || searchQuery.includes('=')
     const prefixResults = getCachedPrefixResults(searchQuery)
     if (!searchQuery) {
       setResults(favoriteResults.length > 0 ? favoriteResults : previousResults)
+      return
+    }
+
+    if (isLabelQuery) {
+      setResults(
+        cachedSearchResultsByQuery.get(
+          normalizeCachedSearchQuery(searchQuery)
+        ) || []
+      )
       return
     }
 
