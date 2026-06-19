@@ -21,7 +21,7 @@ _A modern Kubernetes dashboard_
 
 </div>
 
-Kite is a lightweight, modern Kubernetes dashboard that unifies real-time observability, multi-cluster and resource management, enterprise-grade user governance (OAuth, RBAC, and audit logs), and AI agents in one workspace. Not just a tool, but more like a platform.
+Kite is a lightweight, modern Kubernetes dashboard that unifies real-time observability, multi-cluster and resource management, enterprise-grade user governance (OAuth, MFA, passkeys, RBAC, and audit logs), and AI agents in one workspace. Not just a tool, but more like a platform.
 
 <img width="1586" height="1167" alt="image" src="https://github.com/user-attachments/assets/5710204d-5d34-44af-85dc-3b436e205c12" />
 
@@ -65,6 +65,8 @@ Kite is a lightweight, modern Kubernetes dashboard that unifies real-time observ
 ### Security
 
 - OAuth integration
+- MFA for password users
+- Passkey login
 - Role-based access control
 - User management and role allocation
 

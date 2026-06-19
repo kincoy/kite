@@ -35,7 +35,7 @@ features:
     details: 实时指标、Pod 日志、Pod/Node Web 终端与内置 kubectl 控制台
   - icon: 🔐
     title: 安全
-    details: OAuth 集成、RBAC、用户管理、角色映射与审计日志
+    details: OAuth 集成、MFA、Passkey 登录、RBAC、用户管理、角色映射与审计日志
   - icon: 🤖
     title: AI 助手
     details: 内置 AI 助手，加速日常集群运维与问题排查
