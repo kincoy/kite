@@ -93,7 +93,7 @@ async function loginWithPasswordUi(
   ).toBeVisible()
 
   await page.getByLabel('Username').fill(username)
-  await page.getByLabel('Password').fill(password)
+  await page.getByLabel('Password', { exact: true }).fill(password)
   await page.getByRole('button', { name: 'Sign In with Password' }).click()
 }
 

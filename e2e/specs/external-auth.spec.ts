@@ -368,7 +368,7 @@ test.describe('external auth', () => {
       await expect(page.getByRole('tab', { name: 'LDAP' })).toBeVisible()
       await page.getByRole('tab', { name: 'LDAP' }).click()
       await page.getByLabel('Username').fill(ldapUser.username)
-      await page.getByLabel('Password').fill(ldapUser.password)
+      await page.getByLabel('Password', { exact: true }).fill(ldapUser.password)
       await page.getByRole('button', { name: 'Sign In with LDAP' }).click()
 
       await expectSignedInUser(page, ldapUser.username, ldapUser.provider)
@@ -392,7 +392,7 @@ test.describe('external auth', () => {
         page.getByRole('heading', { name: 'Log in to Your Account' })
       ).toBeVisible()
       await page.getByLabel('Username').fill(oauthUser.username)
-      await page.getByLabel('Password').fill(oauthUser.password)
+      await page.getByLabel('Password', { exact: true }).fill(oauthUser.password)
       await page.getByRole('button', { name: 'Login' }).click()
 
       await expectSignedInUser(page, oauthUser.username, oauthUser.provider)
@@ -424,7 +424,7 @@ test.describe('external auth', () => {
         page.getByRole('heading', { name: 'Log in to Your Account' })
       ).toBeVisible()
       await page.getByLabel('Username').fill(oauthUser.username)
-      await page.getByLabel('Password').fill(oauthUser.password)
+      await page.getByLabel('Password', { exact: true }).fill(oauthUser.password)
       await page.getByRole('button', { name: 'Login' }).click()
 
       await expectSignedInUser(
@@ -452,7 +452,7 @@ test.describe('external auth', () => {
       await expect(page.getByRole('tab', { name: 'LDAP' })).toBeVisible()
       await page.getByRole('tab', { name: 'LDAP' }).click()
       await page.getByLabel('Username').fill(ldapUser.username)
-      await page.getByLabel('Password').fill('wrong-password')
+      await page.getByLabel('Password', { exact: true }).fill('wrong-password')
       await page.getByRole('button', { name: 'Sign In with LDAP' }).click()
 
       await expect(page).toHaveURL(/\/login/)
@@ -479,7 +479,9 @@ test.describe('external auth', () => {
         page.getByRole('heading', { name: 'Log in to Your Account' })
       ).toBeVisible()
       await page.getByLabel('Username').fill(oauthUserWithoutGroup.username)
-      await page.getByLabel('Password').fill(oauthUserWithoutGroup.password)
+      await page
+        .getByLabel('Password', { exact: true })
+        .fill(oauthUserWithoutGroup.password)
       await page.getByRole('button', { name: 'Login' }).click()
 
       await expect(page).toHaveURL(/\/login\?/)
@@ -513,7 +515,7 @@ test.describe('external auth', () => {
         page.getByRole('heading', { name: 'Log in to Your Account' })
       ).toBeVisible()
       await page.getByLabel('Username').fill(oauthUser.username)
-      await page.getByLabel('Password').fill(oauthUser.password)
+      await page.getByLabel('Password', { exact: true }).fill(oauthUser.password)
       await page.getByRole('button', { name: 'Login' }).click()
 
       await expectSignedInUser(
@@ -549,7 +551,7 @@ test.describe('external auth', () => {
         page.getByRole('heading', { name: 'Log in to Your Account' })
       ).toBeVisible()
       await page.getByLabel('Username').fill(oauthUser.username)
-      await page.getByLabel('Password').fill(oauthUser.password)
+      await page.getByLabel('Password', { exact: true }).fill(oauthUser.password)
       await page.getByRole('button', { name: 'Login' }).click()
 
       await expectSignedInUser(
@@ -585,7 +587,9 @@ test.describe('external auth', () => {
         page.getByRole('heading', { name: 'Log in to Your Account' })
       ).toBeVisible()
       await page.getByLabel('Username').fill(oauthUserWithoutGroup.username)
-      await page.getByLabel('Password').fill(oauthUserWithoutGroup.password)
+      await page
+        .getByLabel('Password', { exact: true })
+        .fill(oauthUserWithoutGroup.password)
       await page.getByRole('button', { name: 'Login' }).click()
 
       await expect(page).toHaveURL(/\/login\?/)

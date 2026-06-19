@@ -89,7 +89,7 @@ test('custom role grants namespaces and denies nodes', async ({
 
   await userPage.goto('/login')
   await userPage.getByLabel('Username').fill(username)
-  await userPage.getByLabel('Password').fill(password)
+  await userPage.getByLabel('Password', { exact: true }).fill(password)
   await userPage.getByRole('button', { name: 'Sign In with Password' }).click()
   await userPage.waitForURL((url) => url.pathname === '/')
 
