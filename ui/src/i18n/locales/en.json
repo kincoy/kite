@@ -636,6 +636,7 @@
       "generalError": "An unexpected error occurred during authentication.",
       "contactSupport": "Please try again or contact support if the issue persists.",
       "invalidCredentials": "Invalid username or password",
+      "invalidMfaCode": "Invalid MFA code",
       "unknownError": "An unknown error occurred",
       "userDisabled": "User Disabled",
       "userDisabledMessage": "Your user account has been disabled. Please contact your administrator for more information.",

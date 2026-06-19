@@ -21,8 +21,9 @@ type credentialLoginAttemptState struct {
 }
 
 type credentialLoginAttemptLimiter struct {
-	mu       sync.Mutex
-	attempts map[string]credentialLoginAttemptState
+	mu          sync.Mutex
+	attempts    map[string]credentialLoginAttemptState
+	lastCleanup time.Time
 }
 
 var credentialLoginAttempts = &credentialLoginAttemptLimiter{
@@ -33,11 +34,13 @@ func (l *credentialLoginAttemptLimiter) isBlocked(ip string) bool {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
+	now := time.Now()
+	l.cleanupExpired(now)
+
 	state, ok := l.attempts[ip]
 	if !ok {
 		return false
 	}
-	now := time.Now()
 	if !state.blockedUntil.IsZero() && now.Before(state.blockedUntil) {
 		return true
 	}
@@ -57,6 +60,8 @@ func (l *credentialLoginAttemptLimiter) recordFailure(ip string) bool {
 	defer l.mu.Unlock()
 
 	now := time.Now()
+	l.cleanupExpired(now)
+
 	state := l.attempts[ip]
 	if !state.blockedUntil.IsZero() {
 		if now.Before(state.blockedUntil) {
@@ -72,6 +77,29 @@ func (l *credentialLoginAttemptLimiter) recordFailure(ip string) bool {
 	}
 	l.attempts[ip] = state
 	return !state.blockedUntil.IsZero()
+}
+
+func (l *credentialLoginAttemptLimiter) cleanupExpired(now time.Time) {
+	if !l.lastCleanup.IsZero() && now.Sub(l.lastCleanup) < credentialLoginFailureWindow {
+		return
+	}
+	l.lastCleanup = now
+
+	for ip, state := range l.attempts {
+		if !state.blockedUntil.IsZero() {
+			if now.Before(state.blockedUntil) {
+				continue
+			}
+			state.blockedUntil = time.Time{}
+		}
+
+		state.failures = recentCredentialLoginFailures(state.failures, now)
+		if len(state.failures) == 0 {
+			delete(l.attempts, ip)
+			continue
+		}
+		l.attempts[ip] = state
+	}
 }
 
 func recentCredentialLoginFailures(failures []time.Time, now time.Time) []time.Time {

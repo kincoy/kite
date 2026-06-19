@@ -67,6 +67,8 @@ export function LoginPage() {
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
+  const credentialSubmitDisabled =
+    loginLoading !== null || (mfaRequired && mfaCode.length !== 6)
 
   useEffect(() => {
     if (
@@ -121,7 +123,9 @@ export function LoginPage() {
 
         if (err.message === 'invalid_mfa_code') {
           setMfaRequired(true)
-          setCredentialError('Invalid MFA code')
+          setCredentialError(
+            t('login.errors.invalidMfaCode', 'Invalid MFA code')
+          )
           return
         }
         setCredentialError(
@@ -422,9 +426,14 @@ export function LoginPage() {
                               type="text"
                               inputMode="numeric"
                               autoComplete="one-time-code"
+                              maxLength={6}
                               placeholder="Enter 6-digit code"
                               value={mfaCode}
-                              onChange={(e) => setMfaCode(e.target.value)}
+                              onChange={(e) =>
+                                setMfaCode(
+                                  e.target.value.replace(/\D/g, '').slice(0, 6)
+                                )
+                              }
                               required
                             />
                           </div>
@@ -438,7 +447,7 @@ export function LoginPage() {
                         )}
                         <Button
                           type="submit"
-                          disabled={loginLoading !== null}
+                          disabled={credentialSubmitDisabled}
                           className="w-full h-10"
                         >
                           {loginLoading === credentialsProvider ? (

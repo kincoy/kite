@@ -641,6 +641,7 @@
       "generalError": "认证过程中发生未知错误。",
       "contactSupport": "请重试，如问题持续请联系管理员。",
       "invalidCredentials": "用户名或密码错误",
+      "invalidMfaCode": "MFA 验证码错误",
       "unknownError": "未知错误",
       "userDisabled": "账号已禁用",
       "userDisabledMessage": "你的账号已被禁用，请联系管理员。",
