@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/go-logr/logr"
@@ -30,7 +31,48 @@ import (
 
 var runtimeScheme = runtime.NewScheme()
 
-const cacheSyncTimeout = 10 * time.Second
+const (
+	defaultCacheSyncTimeout = 60 * time.Second
+	defaultKubeAPIQPS       = 50
+	defaultKubeAPIBurst     = 100
+)
+
+// cacheSyncTimeout returns the configured cache sync timeout, overridable via
+// the KITE_CACHE_SYNC_TIMEOUT env var (in seconds). The initial LIST for
+// informers on large/remote clusters can take a long time, so the default is
+// generous and remains configurable for edge cases.
+func cacheSyncTimeout() time.Duration {
+	if v := os.Getenv("KITE_CACHE_SYNC_TIMEOUT"); v != "" {
+		if secs, err := strconv.Atoi(v); err == nil && secs > 0 {
+			return time.Duration(secs) * time.Second
+		}
+	}
+	return defaultCacheSyncTimeout
+}
+
+// kubeAPIQPS returns the QPS limit for the Kubernetes API client, overridable
+// via the KITE_KUBE_API_QPS env var. Defaults to 50 (client-go default is 5,
+// which is too low for large/remote clusters during the initial cache sync).
+func kubeAPIQPS() float32 {
+	if v := os.Getenv("KITE_KUBE_API_QPS"); v != "" {
+		if qps, err := strconv.ParseFloat(v, 32); err == nil && qps > 0 {
+			return float32(qps)
+		}
+	}
+	return defaultKubeAPIQPS
+}
+
+// kubeAPIBurst returns the burst limit for the Kubernetes API client,
+// overridable via the KITE_KUBE_API_BURST env var. Defaults to 100 (client-go
+// default is 10).
+func kubeAPIBurst() int {
+	if v := os.Getenv("KITE_KUBE_API_BURST"); v != "" {
+		if burst, err := strconv.Atoi(v); err == nil && burst > 0 {
+			return burst
+		}
+	}
+	return defaultKubeAPIBurst
+}
 
 func init() {
 	ctrllog.SetLogger(controllerRuntimeLogger(klog.NewKlogr()))
@@ -100,6 +142,17 @@ type K8sClient struct {
 
 // NewClient creates a K8sClient from a rest.Config
 func NewClient(config *rest.Config) (*K8sClient, error) {
+	// Tune QPS/Burst so the initial cache sync LIST on large/remote clusters is
+	// not throttled by the client-go defaults (QPS=5, Burst=10). Values are
+	// overridable via KITE_KUBE_API_QPS and KITE_KUBE_API_BURST. A value
+	// explicitly set on the rest.Config (e.g. from kubeconfig) is preserved.
+	if config.QPS == 0 {
+		config.QPS = kubeAPIQPS()
+	}
+	if config.Burst == 0 {
+		config.Burst = kubeAPIBurst()
+	}
+
 	clientset, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		return nil, err
@@ -155,11 +208,13 @@ func NewClient(config *rest.Config) (*K8sClient, error) {
 				fmt.Printf("Error starting manager: %v\n", err)
 			}
 		}()
-		syncCtx, syncCancel := context.WithTimeout(ctx, cacheSyncTimeout)
+		syncCtx, syncCancel := context.WithTimeout(ctx, cacheSyncTimeout())
 		defer syncCancel()
 		if !mgr.GetCache().WaitForCacheSync(syncCtx) {
 			cancel()
-			return nil, fmt.Errorf("failed to wait for cache sync")
+			return nil, fmt.Errorf("failed to wait for cache sync (timeout: %s); "+
+				"the cluster may be too large or the API server too slow. "+
+				"Consider increasing KITE_CACHE_SYNC_TIMEOUT or setting DISABLE_CACHE=true", cacheSyncTimeout())
 		}
 		c = mgr.GetClient()
 	}
