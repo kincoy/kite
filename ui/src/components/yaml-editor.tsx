@@ -54,7 +54,7 @@ export function YamlEditor<T extends ResourceType>({
   fillHeight = false,
 }: YamlEditorProps<T>) {
   const { t } = useTranslation()
-  const [isEditing, setIsEditing] = useState(true)
+  const [isEditing, setIsEditing] = useState(false)
   const [editorValue, setEditorValue] = useState(value)
   const [isValidYaml, setIsValidYaml] = useState(true)
   const [validationError, setValidationError] = useState<string>('')
